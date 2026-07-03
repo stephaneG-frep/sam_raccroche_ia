@@ -35,7 +35,18 @@ class ResponderProvider extends ChangeNotifier {
       ..clear()
       ..addAll(storage.aiScenarios());
     selectedMessageId = storage.setting('selectedMessageId', 'default_wait');
-    selectedScenarioId = storage.setting('selectedScenarioId', 'funny');
+    final defaultTone = AiTone.fromName(
+      storage.setting('defaultTone', AiTone.funny.name),
+    );
+    selectedScenarioId = storage.setting(
+      'selectedScenarioId',
+      scenarios
+          .firstWhere(
+            (scenario) => scenario.tone == defaultTone,
+            orElse: () => scenarios.first,
+          )
+          .id,
+    );
     notifyListeners();
   }
 
@@ -49,6 +60,15 @@ class ResponderProvider extends ChangeNotifier {
     selectedScenarioId = id;
     await storage.setSetting('selectedScenarioId', id);
     notifyListeners();
+  }
+
+  Future<void> selectTone(AiTone tone) async {
+    final scenario = scenarios.firstWhere(
+      (item) => item.tone == tone,
+      orElse: () => scenarios.first,
+    );
+    await selectScenario(scenario.id);
+    await storage.setSetting('defaultTone', tone.name);
   }
 
   Future<void> saveCustomMessage(String title, String text) async {

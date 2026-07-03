@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../models/call_types.dart';
 import '../providers/responder_provider.dart';
+import '../providers/settings_provider.dart';
 
 class AiAssistantScreen extends StatelessWidget {
   const AiAssistantScreen({super.key});
@@ -22,14 +23,30 @@ class AiAssistantScreen extends StatelessWidget {
                 )
                 .toList(),
             selected: {provider.selectedScenario.tone},
-            onSelectionChanged: (values) {
-              final scenario = provider.scenarios.firstWhere(
-                (item) => item.tone == values.first,
+            onSelectionChanged: (values) async {
+              final tone = values.first;
+              final settings = context.read<SettingsProvider>();
+              final messenger = ScaffoldMessenger.of(context);
+              await provider.selectTone(tone);
+              await settings.setTone(tone);
+              messenger.showSnackBar(
+                SnackBar(
+                  content: Text('${tone.label} devient le scenario actif.'),
+                ),
               );
-              provider.selectScenario(scenario.id);
             },
           ),
           const SizedBox(height: 16),
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.check_circle_outline),
+              title: Text('Scenario actif : ${provider.selectedScenario.name}'),
+              subtitle: const Text(
+                'Ce choix sera utilise dans les simulations et le journal.',
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
           ...provider.selectedScenario.lines.map(
             (line) => Card(
               child: ListTile(

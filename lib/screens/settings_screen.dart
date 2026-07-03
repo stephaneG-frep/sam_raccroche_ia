@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../models/call_types.dart';
 import '../providers/protection_provider.dart';
+import '../providers/responder_provider.dart';
 import '../providers/settings_provider.dart';
 import '../services/storage_service.dart';
 
@@ -80,8 +81,13 @@ class SettingsScreen extends StatelessWidget {
                       DropdownMenuItem(value: tone, child: Text(tone.label)),
                 )
                 .toList(),
-            onChanged: (value) =>
-                value == null ? null : settings.setTone(value),
+            onChanged: (value) async {
+              if (value == null) return;
+              await settings.setTone(value);
+              if (context.mounted) {
+                await context.read<ResponderProvider>().selectTone(value);
+              }
+            },
           ),
           const Divider(),
           FilledButton.icon(
