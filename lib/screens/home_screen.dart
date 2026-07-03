@@ -11,6 +11,7 @@ import '../widgets/section_header.dart';
 import 'ai_assistant_screen.dart';
 import 'blacklist_screen.dart';
 import 'call_log_screen.dart';
+import 'help_screen.dart';
 import 'permissions_screen.dart';
 import 'responder_screen.dart';
 import 'settings_screen.dart';
@@ -99,6 +100,7 @@ class _AppDrawer extends StatelessWidget {
           'Assistant IA',
           const AiAssistantScreen(),
         ),
+        _drawerTile(context, Icons.help_outline, 'Aide', const HelpScreen()),
         _drawerTile(
           context,
           Icons.admin_panel_settings_outlined,

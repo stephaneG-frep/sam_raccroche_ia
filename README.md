@@ -19,6 +19,16 @@ MVP Flutter Android anti-demarchage avec repondeur humoristique local.
 
 Android moderne ne permet pas toujours de repondre automatiquement, diffuser un son dans l appel ou raccrocher, sauf role telephone par defaut et API compatibles. Le MVP affiche cette limite et propose notification, script a lire, bouton de lecture TTS et action manuelle.
 
+## Mode d'emploi rapide
+
+1. Activez la protection depuis l'accueil.
+2. Ajoutez les numeros surs en liste blanche.
+3. Ajoutez les indesirables ou prefixes en liste noire.
+4. Choisissez un message dans Repondeur.
+5. Dans Assistant IA, choisissez un ton puis la phrase exacte a utiliser.
+6. Testez avec Simuler suspect ou Simuler masque.
+7. Consultez le journal et exportez-le en CSV si besoin.
+
 ## Lancer
 
 ```bash
