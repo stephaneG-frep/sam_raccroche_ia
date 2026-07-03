@@ -35,6 +35,13 @@ class CallLogScreen extends StatelessWidget {
               }
             },
           ),
+          IconButton(
+            tooltip: 'Effacer le journal',
+            icon: const Icon(Icons.delete_sweep_outlined),
+            onPressed: provider.logs.isEmpty
+                ? null
+                : () => _confirmClearLog(context, provider),
+          ),
         ],
       ),
       body: Column(
@@ -99,5 +106,39 @@ class CallLogScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _confirmClearLog(
+    BuildContext context,
+    ProtectionProvider provider,
+  ) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Effacer le journal ?'),
+        content: const Text(
+          'Tous les evenements du journal seront supprimes. Les listes noire et blanche ne seront pas modifiees.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Annuler'),
+          ),
+          FilledButton.icon(
+            onPressed: () => Navigator.pop(context, true),
+            icon: const Icon(Icons.delete_sweep_outlined),
+            label: const Text('Effacer'),
+          ),
+        ],
+      ),
+    );
+    if (confirm == true && context.mounted) {
+      await provider.clearLogs();
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Journal efface.')));
+      }
+    }
   }
 }
