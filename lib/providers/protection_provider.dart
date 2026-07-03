@@ -75,7 +75,8 @@ class ProtectionProvider extends ChangeNotifier {
       type: decision.type,
       action: defaultDialer ? decision.action : CallAction.notified,
       messageUsed: responder.selectedMessage.title,
-      scenarioUsed: responder.selectedScenario.name,
+      scenarioUsed:
+          '${responder.selectedScenario.name} - ${responder.selectedScenarioLine}',
       estimatedDurationSeconds: settings.hangupDelaySeconds,
       note: defaultDialer
           ? decision.explanation

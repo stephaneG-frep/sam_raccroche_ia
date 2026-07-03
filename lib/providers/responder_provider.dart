@@ -27,6 +27,8 @@ class ResponderProvider extends ChangeNotifier {
     orElse: () => scenarios.first,
   );
 
+  String get selectedScenarioLine => selectedScenario.selectedLine;
+
   void load() {
     messages
       ..clear()
@@ -59,6 +61,17 @@ class ResponderProvider extends ChangeNotifier {
   Future<void> selectScenario(String id) async {
     selectedScenarioId = id;
     await storage.setSetting('selectedScenarioId', id);
+    notifyListeners();
+  }
+
+  Future<void> selectScenarioLine(int index) async {
+    final scenario = selectedScenario.copyWith(selectedLineIndex: index);
+    final scenarioIndex = scenarios.indexWhere(
+      (item) => item.id == scenario.id,
+    );
+    if (scenarioIndex < 0) return;
+    scenarios[scenarioIndex] = scenario;
+    await storage.saveScenario(scenario);
     notifyListeners();
   }
 

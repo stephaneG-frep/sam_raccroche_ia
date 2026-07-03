@@ -41,20 +41,36 @@ class AiAssistantScreen extends StatelessWidget {
             child: ListTile(
               leading: const Icon(Icons.check_circle_outline),
               title: Text('Scenario actif : ${provider.selectedScenario.name}'),
-              subtitle: const Text(
-                'Ce choix sera utilise dans les simulations et le journal.',
-              ),
+              subtitle: Text(provider.selectedScenarioLine),
             ),
           ),
           const SizedBox(height: 8),
-          ...provider.selectedScenario.lines.map(
-            (line) => Card(
+          ...provider.selectedScenario.lines.asMap().entries.map(
+            (entry) => Card(
               child: ListTile(
-                leading: const Icon(Icons.smart_toy_outlined),
-                title: Text(line),
+                leading: Icon(
+                  entry.key == provider.selectedScenario.selectedLineIndex
+                      ? Icons.radio_button_checked
+                      : Icons.radio_button_unchecked,
+                ),
+                title: Text(entry.value),
+                subtitle:
+                    entry.key == provider.selectedScenario.selectedLineIndex
+                    ? const Text('Phrase active')
+                    : null,
+                onTap: () async {
+                  await provider.selectScenarioLine(entry.key);
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Phrase active mise a jour.'),
+                      ),
+                    );
+                  }
+                },
                 trailing: IconButton(
                   icon: const Icon(Icons.volume_up_outlined),
-                  onPressed: () => provider.speakLine(line),
+                  onPressed: () => provider.speakLine(entry.value),
                 ),
               ),
             ),
