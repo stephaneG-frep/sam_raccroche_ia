@@ -32,3 +32,5 @@ flutter run
 flutter build apk --debug
 flutter build apk --release
 ```
+
+Pour une signature Android de diffusion, voir [SIGNING.md](SIGNING.md).

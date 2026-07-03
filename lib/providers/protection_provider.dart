@@ -103,9 +103,16 @@ class ProtectionProvider extends ChangeNotifier {
     load();
   }
 
-  Future<void> requestDefaultDialer() async {
-    await callService.requestDefaultDialerRole();
+  Future<bool> requestDefaultDialer() async {
+    final opened = await callService.requestDefaultDialerRole();
     await _refreshDialerState();
+    return opened;
+  }
+
+  Future<void> refreshDialerState() => _refreshDialerState();
+
+  Future<bool> openDefaultAppsSettings() async {
+    return callService.openDefaultAppsSettings();
   }
 
   void setQuery(String value) {

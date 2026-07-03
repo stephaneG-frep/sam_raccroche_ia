@@ -29,11 +29,22 @@ class CallService {
     }
   }
 
-  Future<void> requestDefaultDialerRole() async {
+  Future<bool> requestDefaultDialerRole() async {
     try {
-      await _channel.invokeMethod<void>('requestDefaultDialerRole');
+      return await _channel.invokeMethod<bool>('requestDefaultDialerRole') ??
+          false;
     } on PlatformException {
       // Android moderne limite ces actions. L UI affiche une alternative manuelle.
+      return false;
+    }
+  }
+
+  Future<bool> openDefaultAppsSettings() async {
+    try {
+      return await _channel.invokeMethod<bool>('openDefaultAppsSettings') ??
+          false;
+    } on PlatformException {
+      return false;
     }
   }
 

@@ -19,7 +19,7 @@ class PermissionsScreen extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.all(16),
               child: Text(
-                'Android limite fortement la reponse automatique, la diffusion audio dans un appel et le raccrochage. Pour certaines actions, l application doit etre telephone par defaut. Sinon Sam propose notifications, bouton Lire message, script a lire et mode haut-parleur manuel.',
+                'Android limite fortement la reponse automatique, la diffusion audio dans un appel et le raccrochage. Le role telephone par defaut peut etre refuse si Android juge que l app n implemente pas assez de fonctions telephone natives. Dans ce cas, Sam garde le mode alternatif : notification, script a lire, bouton Lire message et haut-parleur manuel.',
               ),
             ),
           ),
@@ -37,14 +37,65 @@ class PermissionsScreen extends StatelessWidget {
             permission: Permission.notification,
           ),
           const SizedBox(height: 16),
+          Card(
+            child: ListTile(
+              leading: Icon(
+                protection.defaultDialer
+                    ? Icons.check_circle_outline
+                    : Icons.info_outline,
+              ),
+              title: const Text('Etat role telephone'),
+              subtitle: Text(
+                protection.defaultDialer
+                    ? 'Sam est defini comme telephone par defaut.'
+                    : 'Sam n est pas encore telephone par defaut sur cet appareil.',
+              ),
+              trailing: IconButton(
+                tooltip: 'Rafraichir',
+                icon: const Icon(Icons.refresh),
+                onPressed: protection.refreshDialerState,
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
           FilledButton.icon(
-            onPressed: protection.requestDefaultDialer,
+            onPressed: () async {
+              final opened = await protection.requestDefaultDialer();
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      opened
+                          ? 'Demande Android ouverte. Si Sam n apparait pas, le role est refuse par Android.'
+                          : 'Android n a pas ouvert la demande. Utilisez les parametres des apps par defaut.',
+                    ),
+                  ),
+                );
+              }
+            },
             icon: const Icon(Icons.phone_android_outlined),
             label: Text(
               protection.defaultDialer
                   ? 'Telephone par defaut actif'
-                  : 'Definir comme telephone par defaut',
+                  : 'Tenter le role telephone',
             ),
+          ),
+          const SizedBox(height: 8),
+          OutlinedButton.icon(
+            onPressed: () async {
+              final opened = await protection.openDefaultAppsSettings();
+              if (!opened && context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      'Impossible d ouvrir les parametres Android automatiquement.',
+                    ),
+                  ),
+                );
+              }
+            },
+            icon: const Icon(Icons.settings_applications_outlined),
+            label: const Text('Ouvrir apps par defaut'),
           ),
         ],
       ),
