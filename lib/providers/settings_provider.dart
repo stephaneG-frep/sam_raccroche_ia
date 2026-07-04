@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/call_types.dart';
+import '../services/native_rules_service.dart';
 import '../services/storage_service.dart';
 
 class SettingsProvider extends ChangeNotifier {
@@ -12,6 +13,7 @@ class SettingsProvider extends ChangeNotifier {
   bool notificationsEnabled = true;
   bool responderEnabled = true;
   bool pinEnabled = false;
+  bool blockHiddenNumbers = true;
   int hangupDelaySeconds = 25;
   TimeOfDay start = const TimeOfDay(hour: 8, minute: 0);
   TimeOfDay end = const TimeOfDay(hour: 20, minute: 0);
@@ -23,6 +25,7 @@ class SettingsProvider extends ChangeNotifier {
     notificationsEnabled = storage.setting('notificationsEnabled', true);
     responderEnabled = storage.setting('responderEnabled', true);
     pinEnabled = storage.setting('pinEnabled', false);
+    blockHiddenNumbers = storage.setting('blockHiddenNumbers', true);
     hangupDelaySeconds = storage.setting('hangupDelaySeconds', 25);
     start = TimeOfDay(
       hour: storage.setting('startHour', 8),
@@ -59,6 +62,13 @@ class SettingsProvider extends ChangeNotifier {
   Future<void> setPin(bool value) async {
     pinEnabled = value;
     await storage.setSetting('pinEnabled', value);
+    notifyListeners();
+  }
+
+  Future<void> setBlockHiddenNumbers(bool value) async {
+    blockHiddenNumbers = value;
+    await storage.setSetting('blockHiddenNumbers', value);
+    await NativeRulesService.sync(storage);
     notifyListeners();
   }
 

@@ -42,7 +42,7 @@ class SamCallScreeningService : CallScreeningService() {
     private fun shouldReject(number: String, rules: JSONObject): Boolean {
         val settings = rules.optJSONObject("settings") ?: JSONObject()
         if (!settings.optBoolean("protectionEnabled", true)) return false
-        if (number.isBlank()) return false
+        if (number.isBlank()) return settings.optBoolean("blockHiddenNumbers", true)
 
         if (containsNumber(rules.optJSONArray("whitelist") ?: JSONArray(), number)) {
             return false

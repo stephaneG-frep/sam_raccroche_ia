@@ -58,6 +58,12 @@ class SettingsScreen extends StatelessWidget {
             value: settings.pinEnabled,
             onChanged: settings.setPin,
           ),
+          SwitchListTile(
+            title: const Text('Bloquer numeros masques/prives'),
+            subtitle: const Text('Rejette les appels sans numero visible.'),
+            value: settings.blockHiddenNumbers,
+            onChanged: settings.setBlockHiddenNumbers,
+          ),
           ListTile(
             leading: const Icon(Icons.timer_outlined),
             title: const Text('Delai avant raccrochage'),

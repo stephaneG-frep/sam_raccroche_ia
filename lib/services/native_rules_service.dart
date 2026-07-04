@@ -11,6 +11,7 @@ class NativeRulesService {
     final payload = {
       'settings': {
         'protectionEnabled': storage.setting('protectionEnabled', true),
+        'blockHiddenNumbers': storage.setting('blockHiddenNumbers', true),
         'blockedPrefixes': List<String>.from(
           storage.setting('blockedPrefixes', ['089', '097', '+339']),
         ),
