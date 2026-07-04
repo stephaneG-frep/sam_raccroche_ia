@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../models/call_log_entry.dart';
 import '../models/call_types.dart';
 import '../services/call_service.dart';
+import '../services/native_rules_service.dart';
 import '../services/notification_service.dart';
 import '../services/storage_service.dart';
 import 'numbers_provider.dart';
@@ -51,6 +52,7 @@ class ProtectionProvider extends ChangeNotifier {
   Future<void> setEnabled(bool value) async {
     enabled = value;
     await storage.setSetting('protectionEnabled', value);
+    await NativeRulesService.sync(storage);
     notifyListeners();
   }
 

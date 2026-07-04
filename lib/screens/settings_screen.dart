@@ -5,6 +5,7 @@ import '../models/call_types.dart';
 import '../providers/protection_provider.dart';
 import '../providers/responder_provider.dart';
 import '../providers/settings_provider.dart';
+import '../services/native_rules_service.dart';
 import '../services/storage_service.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -121,7 +122,9 @@ class SettingsScreen extends StatelessWidget {
       ),
     );
     if (confirm == true && context.mounted) {
-      await context.read<StorageService>().clearAll();
+      final storage = context.read<StorageService>();
+      await storage.clearAll();
+      await NativeRulesService.sync(storage);
       if (context.mounted) {
         context.read<ProtectionProvider>().load();
         context.read<SettingsProvider>().load();

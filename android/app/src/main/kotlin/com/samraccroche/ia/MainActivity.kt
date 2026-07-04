@@ -12,6 +12,7 @@ import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
     private val channelName = "sam_raccroche_ia/calls"
+    private val prefsName = "sam_raccroche_ia_native_rules"
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -21,6 +22,14 @@ class MainActivity : FlutterActivity() {
                 "requestDefaultDialerRole" -> result.success(requestDefaultDialerRole())
                 "openDefaultAppsSettings" -> result.success(openDefaultAppsSettings())
                 "hangUp" -> result.success(hangUp())
+                "syncRules" -> {
+                    val payload = call.argument<String>("payload").orEmpty()
+                    getSharedPreferences(prefsName, Context.MODE_PRIVATE)
+                        .edit()
+                        .putString("rules_payload", payload)
+                        .apply()
+                    result.success(null)
+                }
                 else -> result.notImplemented()
             }
         }

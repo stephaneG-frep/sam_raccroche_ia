@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../models/allowed_number.dart';
 import '../models/blocked_number.dart';
+import '../services/native_rules_service.dart';
 import '../services/storage_service.dart';
 
 class NumbersProvider extends ChangeNotifier {
@@ -38,6 +39,7 @@ class NumbersProvider extends ChangeNotifier {
       createdAt: DateTime.now(),
     );
     await storage.saveBlocked(item);
+    await NativeRulesService.sync(storage);
     load();
   }
 
@@ -49,16 +51,19 @@ class NumbersProvider extends ChangeNotifier {
       createdAt: DateTime.now(),
     );
     await storage.saveAllowed(item);
+    await NativeRulesService.sync(storage);
     load();
   }
 
   Future<void> deleteBlocked(String id) async {
     await storage.deleteBlocked(id);
+    await NativeRulesService.sync(storage);
     load();
   }
 
   Future<void> deleteAllowed(String id) async {
     await storage.deleteAllowed(id);
+    await NativeRulesService.sync(storage);
     load();
   }
 
@@ -68,12 +73,14 @@ class NumbersProvider extends ChangeNotifier {
     }
     blockedPrefixes.add(prefix.trim());
     await storage.setSetting('blockedPrefixes', blockedPrefixes);
+    await NativeRulesService.sync(storage);
     notifyListeners();
   }
 
   Future<void> removePrefix(String prefix) async {
     blockedPrefixes.remove(prefix);
     await storage.setSetting('blockedPrefixes', blockedPrefixes);
+    await NativeRulesService.sync(storage);
     notifyListeners();
   }
 }

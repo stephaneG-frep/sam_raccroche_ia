@@ -7,6 +7,7 @@ import 'providers/responder_provider.dart';
 import 'providers/settings_provider.dart';
 import 'screens/home_screen.dart';
 import 'services/call_service.dart';
+import 'services/native_rules_service.dart';
 import 'services/notification_service.dart';
 import 'services/storage_service.dart';
 import 'services/tts_service.dart';
@@ -19,6 +20,7 @@ Future<void> main() async {
   await notifications.init();
   final tts = TtsService();
   await tts.init();
+  await NativeRulesService.sync(storage);
 
   runApp(
     MultiProvider(
