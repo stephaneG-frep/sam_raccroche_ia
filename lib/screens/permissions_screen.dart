@@ -19,7 +19,7 @@ class PermissionsScreen extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.all(16),
               child: Text(
-                'Android limite fortement la reponse automatique, la diffusion audio dans un appel et le raccrochage. Le role telephone par defaut peut etre refuse si Android juge que l app n implemente pas assez de fonctions telephone natives. Dans ce cas, Sam garde le mode alternatif : notification, script a lire, bouton Lire message et haut-parleur manuel.',
+                'Android limite fortement la reponse automatique, la diffusion audio dans un appel et le raccrochage. Sam utilise le role filtrage d appels pour ne pas remplacer l app Telephone. Si Sam a ete choisi comme telephone par defaut, remettez votre app Telephone habituelle dans les parametres Android.',
               ),
             ),
           ),
@@ -44,11 +44,11 @@ class PermissionsScreen extends StatelessWidget {
                     ? Icons.check_circle_outline
                     : Icons.info_outline,
               ),
-              title: const Text('Etat role telephone'),
+              title: const Text('Etat filtrage appels'),
               subtitle: Text(
                 protection.defaultDialer
-                    ? 'Sam est defini comme telephone par defaut.'
-                    : 'Sam n est pas encore telephone par defaut sur cet appareil.',
+                    ? 'Sam peut filtrer les appels sans remplacer le telephone.'
+                    : 'Sam n a pas encore le role filtrage d appels sur cet appareil.',
               ),
               trailing: IconButton(
                 tooltip: 'Rafraichir',
@@ -66,7 +66,7 @@ class PermissionsScreen extends StatelessWidget {
                   SnackBar(
                     content: Text(
                       opened
-                          ? 'Demande Android ouverte. Si Sam n apparait pas, le role est refuse par Android.'
+                          ? 'Demande Android ouverte. Choisissez Sam pour le filtrage d appels, pas comme telephone par defaut.'
                           : 'Android n a pas ouvert la demande. Utilisez les parametres des apps par defaut.',
                     ),
                   ),
@@ -76,8 +76,8 @@ class PermissionsScreen extends StatelessWidget {
             icon: const Icon(Icons.phone_android_outlined),
             label: Text(
               protection.defaultDialer
-                  ? 'Telephone par defaut actif'
-                  : 'Tenter le role telephone',
+                  ? 'Filtrage appels actif'
+                  : 'Activer le filtrage appels',
             ),
           ),
           const SizedBox(height: 8),

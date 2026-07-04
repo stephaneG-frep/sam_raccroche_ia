@@ -314,7 +314,7 @@ class _DashboardView extends StatelessWidget {
                 leading: Icon(Icons.info_outline),
                 title: Text('Limite Android moderne'),
                 subtitle: Text(
-                  'Repondre, diffuser un son dans l appel ou raccrocher peut exiger que l app soit telephone par defaut. Les alternatives manuelles restent disponibles.',
+                  'Sam utilise le filtrage d appels pour laisser votre app Telephone recevoir les appels. Le raccrochage automatique peut rester bloque par Android selon l appareil.',
                 ),
               ),
             ),

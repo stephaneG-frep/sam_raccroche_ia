@@ -4,13 +4,27 @@ import android.telecom.Call
 import android.telecom.InCallService
 
 class SamInCallService : InCallService() {
+    companion object {
+        private val activeCalls = mutableSetOf<Call>()
+
+        fun hangUpActiveCall(): Boolean {
+            val call = activeCalls.lastOrNull() ?: return false
+            return try {
+                call.disconnect()
+                true
+            } catch (_: Exception) {
+                false
+            }
+        }
+    }
+
     override fun onCallAdded(call: Call) {
         super.onCallAdded(call)
-        // MVP: Android exige souvent un InCallService pour etre eligible au role Dialer.
-        // L'interface d'appel complete sera implementee dans une prochaine iteration.
+        activeCalls.add(call)
     }
 
     override fun onCallRemoved(call: Call) {
         super.onCallRemoved(call)
+        activeCalls.remove(call)
     }
 }

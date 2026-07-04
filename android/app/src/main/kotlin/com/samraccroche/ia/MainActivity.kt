@@ -20,37 +20,60 @@ class MainActivity : FlutterActivity() {
                 "isDefaultDialer" -> result.success(isDefaultDialer())
                 "requestDefaultDialerRole" -> result.success(requestDefaultDialerRole())
                 "openDefaultAppsSettings" -> result.success(openDefaultAppsSettings())
-                "hangUp" -> result.success(false)
+                "hangUp" -> result.success(hangUp())
                 else -> result.notImplemented()
             }
         }
     }
 
     private fun isDefaultDialer(): Boolean {
-        val telecom = getSystemService(Context.TELECOM_SERVICE) as TelecomManager
-        return packageName == telecom.defaultDialerPackage
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            return false
+        }
+        val roleManager = getSystemService(RoleManager::class.java)
+        return roleManager.isRoleAvailable(RoleManager.ROLE_CALL_SCREENING) &&
+            roleManager.isRoleHeld(RoleManager.ROLE_CALL_SCREENING)
     }
 
     private fun requestDefaultDialerRole(): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val roleManager = getSystemService(RoleManager::class.java)
-            if (roleManager.isRoleAvailable(RoleManager.ROLE_DIALER) && !roleManager.isRoleHeld(RoleManager.ROLE_DIALER)) {
-                startActivityForResult(roleManager.createRequestRoleIntent(RoleManager.ROLE_DIALER), 42)
+            if (roleManager.isRoleAvailable(RoleManager.ROLE_CALL_SCREENING) &&
+                !roleManager.isRoleHeld(RoleManager.ROLE_CALL_SCREENING)
+            ) {
+                startActivityForResult(
+                    roleManager.createRequestRoleIntent(RoleManager.ROLE_CALL_SCREENING),
+                    42,
+                )
                 return true
             }
-            return isDefaultDialer()
-        } else {
-            val intent = Intent(TelecomManager.ACTION_CHANGE_DEFAULT_DIALER)
-            intent.putExtra(TelecomManager.EXTRA_CHANGE_DEFAULT_DIALER_PACKAGE_NAME, packageName)
-            startActivity(intent)
-            return true
         }
+        return isDefaultDialer()
     }
 
     private fun openDefaultAppsSettings(): Boolean {
         return try {
             startActivity(Intent(Settings.ACTION_MANAGE_DEFAULT_APPS_SETTINGS))
             true
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    private fun hangUp(): Boolean {
+        if (SamInCallService.hangUpActiveCall()) {
+            return true
+        }
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+            return false
+        }
+
+        return try {
+            val telecom = getSystemService(Context.TELECOM_SERVICE) as TelecomManager
+            telecom.endCall()
+        } catch (_: SecurityException) {
+            false
         } catch (_: Exception) {
             false
         }
